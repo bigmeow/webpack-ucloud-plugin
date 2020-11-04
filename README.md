@@ -1,4 +1,5 @@
-#webpack-ucloud-plugin
+# webpack-ucloud-plugin
+
 webpack ucloud 插件,将编译完成的代码上传到 ucloud 云存储上
 
 ## 使用
@@ -24,9 +25,9 @@ const UcloudPlugin = require('webpack-ucloud-plugin')
       // 要上传的文件夹
       localDir: '',
       // 上传到 bucketName 下面的目录
-      remoteDir: ''
+      remoteDir: '',
       // 其他配置项 http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#constructor-property
-    })
+    }),
   ]
 }
 ```
