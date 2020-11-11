@@ -37,28 +37,23 @@ class UcloudPlugin {
             },
         };
         const uploader = client.uploadDir(params);
-        const needUploadFile = [];
+        let isFirst = true;
         uploader.on('error', (err) => {
             console.error('上传失败:', err.stack);
         });
-        uploader.on('fileUploadStart', (fullPath) => {
-            needUploadFile.push(fullPath);
-        });
-        uploader.on('fileUploadEnd', (fullPath) => {
-            const willDeleteIndex = needUploadFile.indexOf(fullPath);
-            if (willDeleteIndex > -1) {
-                needUploadFile.splice(willDeleteIndex, 1);
-            }
-        });
-        uploader.on('end', () => {
-            if (needUploadFile.length > 0) {
-                console.warn('\n注意：存在未上传文件：', needUploadFile);
-            }
-            else {
-                console.info('\n上传完毕');
+        uploader.on('fileUploadStart', () => {
+            if (isFirst) {
+                isFirst = false;
+                const copyOption = JSON.parse(JSON.stringify(this.options));
+                delete copyOption.accessKeyId;
+                delete copyOption.secretAccessKey;
+                console.log("正在上传资源到Ucloud,上传配置:\n", copyOption);
             }
         });
         // console.log('开始上传', Object.keys(stats.compilation.assets))
+        uploader.on('end', () => {
+            console.log(`上传完毕，总计需要上传${(uploader.progressTotal / 1024 / 1024).toFixed(2)}MB(${uploader.progressTotal}bytes), 实际上传${(uploader.progressAmount / 1024 / 1024).toFixed(2)}MB(${uploader.progressAmount}bytes)`);
+        });
     }
 }
 exports.default = UcloudPlugin;
