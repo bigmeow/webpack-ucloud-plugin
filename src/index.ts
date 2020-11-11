@@ -46,20 +46,16 @@ export default class UcloudPlugin {
       },
     };
     const uploader = client.uploadDir(params);
-    let isFirst = true;
+    setTimeout(() => {
+      const copyOption = JSON.parse(JSON.stringify(this.options));
+      delete copyOption.accessKeyId;
+      delete copyOption.secretAccessKey;
+      console.log("正在上传资源到Ucloud,上传配置:\n", copyOption);
+    }, 0);
     uploader.on('error', (err: Error) => {
       console.error('上传失败:', err.stack);
     });
 
-    uploader.on('fileUploadStart', () => {
-      if (isFirst) {
-        isFirst = false;
-        const copyOption = JSON.parse(JSON.stringify(this.options));
-        delete copyOption.accessKeyId;
-        delete copyOption.secretAccessKey;
-        console.log("正在上传资源到Ucloud,上传配置:\n", copyOption);
-      }
-    });
     // console.log('开始上传', Object.keys(stats.compilation.assets))
     uploader.on('end', () => {
         console.log(`上传完毕，总计需要上传${( uploader.progressTotal / 1024 / 1024 ).toFixed(2)}MB(${uploader.progressTotal}bytes), 实际上传${(uploader.progressAmount / 1024 /1024).toFixed(2)}MB(${uploader.progressAmount}bytes)`)

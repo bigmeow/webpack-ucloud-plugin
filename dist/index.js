@@ -37,18 +37,14 @@ class UcloudPlugin {
             },
         };
         const uploader = client.uploadDir(params);
-        let isFirst = true;
+        setTimeout(() => {
+            const copyOption = JSON.parse(JSON.stringify(this.options));
+            delete copyOption.accessKeyId;
+            delete copyOption.secretAccessKey;
+            console.log("正在上传资源到Ucloud,上传配置:\n", copyOption);
+        }, 0);
         uploader.on('error', (err) => {
             console.error('上传失败:', err.stack);
-        });
-        uploader.on('fileUploadStart', () => {
-            if (isFirst) {
-                isFirst = false;
-                const copyOption = JSON.parse(JSON.stringify(this.options));
-                delete copyOption.accessKeyId;
-                delete copyOption.secretAccessKey;
-                console.log("正在上传资源到Ucloud,上传配置:\n", copyOption);
-            }
         });
         // console.log('开始上传', Object.keys(stats.compilation.assets))
         uploader.on('end', () => {
